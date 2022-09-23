@@ -4,11 +4,21 @@ const express = require('express')
 const createError = require('http-errors')
 const cookieParser = require('cookie-parser')
 const logger = require('morgan')
+const mongoose = require('mongoose')
 
 const indexRouter = require('./routes/index')
 const usersRouter = require('./routes/users')
 
 const app = express()
+
+// ____________________ database ____________________
+mongoose
+  .connect('mongodb://localhost:27017/local_library')
+  .then(() => console.info('connection to mongodb established'))
+  .catch(error => {
+    console.error("couldn't connect to mongodb")
+    throw error
+  })
 
 // ____________________ settings ____________________
 
