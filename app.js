@@ -6,8 +6,7 @@ const cookieParser = require('cookie-parser')
 const logger = require('morgan')
 const mongoose = require('mongoose')
 
-const indexRouter = require('./routes/index')
-const usersRouter = require('./routes/users')
+const { homeRouter, usersRouter, catalogRouter } = require('./routes')
 
 const app = express()
 
@@ -35,8 +34,9 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 // ____________________ routers ____________________
 
-app.use('/', indexRouter)
+app.use('/', homeRouter)
 app.use('/users', usersRouter)
+app.use('/catalog', catalogRouter)
 
 // ____________________ error handling ____________________
 

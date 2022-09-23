@@ -1,9 +1,9 @@
-const express = require('express')
+const catalogRouter = require('./catalog')
+const usersRouter = require('./users')
+const homeRouter = require('./home')
 
-const router = express.Router()
-
-router.get('/', (req, res, next) => {
-  res.render('index', { title: 'Express' })
-})
-
-module.exports = router
+module.exports = {
+  catalogRouter,
+  usersRouter,
+  homeRouter,
+}
