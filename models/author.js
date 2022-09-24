@@ -1,6 +1,7 @@
 /* eslint-disable func-names */
 
 const mongoose = require('mongoose')
+const { DateTime } = require('luxon')
 
 const { Schema } = mongoose
 
@@ -17,6 +18,18 @@ AuthorSchema.virtual('url').get(function () {
 
 AuthorSchema.virtual('name').get(function () {
   return this.firstName && this.lastName ? `${this.lastName}, ${this.firstName}` : ''
+})
+
+AuthorSchema.virtual('birthDateFormatted').get(function () {
+  return (
+    this.birthDate && DateTime.fromJSDate(this.birthDate).toLocaleString(DateTime.DATE_MED)
+  )
+})
+
+AuthorSchema.virtual('deathDateFormatted').get(function () {
+  return this.deathDate
+    ? DateTime.fromJSDate(this.deathDate).toLocaleString(DateTime.DATE_MED)
+    : 'present'
 })
 
 const Author = mongoose.model('Author', AuthorSchema)

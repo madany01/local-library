@@ -1,9 +1,27 @@
-function bookInstanceList(req, res) {
-  res.send('bookInstance list')
+const { BookInstance } = require('../models')
+
+async function bookInstanceList(req, res) {
+  const bookInstances = await BookInstance.find().populate('book')
+
+  res.render('book-instance_list', {
+    title: 'Book Instance List',
+    bookInstances,
+  })
 }
 
-function bookInstanceDetail(req, res) {
-  res.send(`bookInstance detail ${req.params.id}`)
+async function bookInstanceDetail(req, res) {
+  let bookInstance
+  try {
+    bookInstance = await BookInstance.findById(req.params.id).populate('book').orFail()
+  } catch {
+    const error = new Error('Book Instance not found')
+    error.status = 404
+    throw error
+  }
+  res.render('book-instance_detail', {
+    title: `Copy ${bookInstance.book.title}`,
+    bookInstance,
+  })
 }
 
 function bookInstanceCreateGet(req, res) {

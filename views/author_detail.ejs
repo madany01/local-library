@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('./partials/head') %>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-2"><%- include('./partials/sidebar') %></div>
+        <div class="col-sm-10">
+          <h1>Author <%= author.name %></h1>
+          <% if (author.birthDate || author.deathDate) { %>
+          <span><%= author.birthDateFormatted %> - <%= author.deathDateFormatted %></span>
+          <% } %>
+
+          <div style="margin-left: 20px; margin-top: 20px">
+            <h4>Books</h4>
+            <dl>
+              <% if (books.length) { %> <% books.forEach(book => { %>
+              <dt>
+                <a href="<%= book.url %>"><%= book.title %></a>
+              </dt>
+              <dd><%= book.summary %></dd>
+              <% }) %> <% } else { %>
+              <p>There are no books</p>
+              <% } %>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

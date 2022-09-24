@@ -1,9 +1,22 @@
-function authorList(req, res) {
-  res.send('author list')
+const { Author, Book } = require('../models')
+
+async function authorList(req, res) {
+  const authors = await Author.find().sort({ lastName: 1, firstName: 1 })
+  res.render('author_list', { authors, title: 'Authors List' })
 }
 
-function authorDetail(req, res) {
-  res.send(`author detail ${req.params.id}`)
+async function authorDetail(req, res) {
+  let author
+
+  try {
+    author = await Author.findById(req.params.id).orFail()
+  } catch {
+    const error = new Error('Author not found')
+    error.status = 404
+    throw error
+  }
+  const books = await Book.where('author').equals(author).select('title summary')
+  res.render('author_detail', { books, author, title: 'Author Detail' })
 }
 
 function authorCreateGet(req, res) {

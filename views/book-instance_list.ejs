@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('./partials/head') %>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-2"><%- include('./partials/sidebar') %></div>
+        <div class="col-sm-10">
+          <h1><%= title %></h1>
+          <ul>
+            <% if (bookInstances.length) { %> <% bookInstances.forEach(bookInstance => { %>
+            <li>
+              <a href="<%= bookInstance.url %> "><%= bookInstance.book.title %> </a>
+              <span class="text-<%= bookInstance.statusColor %>"
+                ><%= bookInstance.status %></span
+              >
+              <% if (!bookInstance.available) { %>
+              <span>(due <%= bookInstance.dueBackFormatted %> )</span>
+              <% } %>
+            </li>
+            <% }) %> <% } else { %>
+            <li>There are no bookInstances in this library</li>
+            <% } %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

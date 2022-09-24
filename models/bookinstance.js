@@ -1,6 +1,7 @@
 /* eslint-disable func-names */
 
 const mongoose = require('mongoose')
+const { DateTime } = require('luxon')
 
 const { Schema } = mongoose
 
@@ -25,6 +26,20 @@ const BookInstanceSchema = new Schema({
 
 BookInstanceSchema.virtual('url').get(function () {
   return `/catalog/book-instances/${this._id}`
+})
+
+BookInstanceSchema.virtual('dueBackFormatted').get(function () {
+  return DateTime.fromJSDate(this.dueBack).toLocaleString(DateTime.DATE_MED)
+})
+
+BookInstanceSchema.virtual('statusColor').get(function () {
+  if (this.status === BOOK_STATUS.Available) return 'success'
+  if (this.status === BOOK_STATUS.Maintenance) return 'danger'
+  return 'warning'
+})
+
+BookInstanceSchema.virtual('available').get(function () {
+  return this.status === BOOK_STATUS.Available
 })
 
 const BookInstance = mongoose.model('BookInstance', BookInstanceSchema)
