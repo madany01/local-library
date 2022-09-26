@@ -34,8 +34,11 @@
             <strong>Due Back:</strong>
             <span><%= bookInstance.dueBackFormatted %></span>
           </p>
-
           <% } %>
+
+          <br />
+          <a href="<%= bookInstance.url %>/update" class="btn btn-warning">update</a>
+          <a href="<%= bookInstance.url %>/delete" class="btn btn-danger">delete</a>
         </div>
       </div>
     </div>

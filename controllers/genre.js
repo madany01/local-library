@@ -1,4 +1,7 @@
+const { body, validationResult } = require('express-validator')
 const { Genre, Book } = require('../models')
+const { getObjectOr404 } = require('../shortcuts')
+const { formateValidationErrors } = require('../utils')
 
 async function genreList(req, res) {
   const genres = await Genre.find().sort({ name: 1 })
@@ -10,15 +13,7 @@ async function genreList(req, res) {
 }
 
 async function genreDetail(req, res, next) {
-  let genre
-
-  try {
-    genre = await Genre.findById(req.params.id).orFail()
-  } catch {
-    const error = Error('Genre not found')
-    error.status = 404
-    throw error
-  }
+  const genre = await getObjectOr404(Genre, req.params.id)
 
   const books = await Book.where({ genre: { $all: [genre] } })
 
@@ -30,12 +25,43 @@ async function genreDetail(req, res, next) {
 }
 
 function genreCreateGet(req, res) {
-  res.send('genre create - get')
+  res.render('genre_form', {
+    title: 'Create Genre',
+  })
 }
 
-function genreCreatePost(req, res) {
-  res.send('genre create - post')
-}
+const genreCreatePost = [
+  body('name')
+    .trim()
+    .notEmpty()
+    .withMessage('genre name is required')
+    .toLowerCase()
+    .escape(),
+
+  async (req, res) => {
+    const genre = new Genre({ name: req.body.name })
+    const errors = validationResult(req)
+
+    if (!errors.isEmpty()) {
+      res.render('genre_form', {
+        title: 'Create Genre',
+        genre,
+        errors: formateValidationErrors(errors),
+      })
+      return
+    }
+
+    const foundGenre = await Genre.findOne({ name: req.body.name })
+
+    if (foundGenre) {
+      res.redirect(foundGenre.url)
+      return
+    }
+
+    await genre.save()
+    res.redirect(genre.url)
+  },
+]
 
 function genreDeleteGet(req, res) {
   res.send('genre delete - get')

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('./partials/head') %>
+<% const selectedBook = locals.bookInstance?.book?._id; %>
+
+<body>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-2"><%- include('./partials/sidebar') %></div>
+      <div class="col-sm-10">
+        <h1><%= title %></h1>
+        <form method="post">
+          <div class="form-group">
+            <label for="baseBook" class="form-label">book</label>
+            <select type="text" name="book" class="form-control <%= locals.errors?.book ? 'is-invalid' : '' %>"
+              id="baseBook" value="<%= selectedBook || ''%>">
+              <option value="">select a book</option>
+              <% books.forEach(book => { %>
+              <!--  -->
+              <% if (selectedBook?.toString() === book._id.toString()) { %>
+              <!--  -->
+              <option selected value="<%= book._id %>"><%= book.title %></option>
+              <% } else {%>
+              <option value="<%= book._id %>"><%= book.title %></option>
+              <% } %> <% }) %>
+            </select>
+            <%- include('./partials/field-errors', {fieldName: 'book'}) %>
+          </div>
+
+          <div class="form-group">
+            <label for="bookImprint" class="form-label">imprint</label>
+            <input type="text" name="imprint" class="form-control <%= locals.errors?.imprint ? 'is-invalid' : '' %>"
+              id="bookImprint" placeholder="book imprint" value="<%= locals.bookInstance?.imprint || ''%>" />
+            <%- include('./partials/field-errors', {fieldName: 'imprint'}) %>
+          </div>
+
+          <div class="form-group">
+            <label for="bookDueDate" class="form-label">dueBack</label>
+            <input type="date" name="dueBack" class="form-control <%= locals.errors?.dueBack ? 'is-invalid' : '' %>"
+              id="bookDueDate" placeholder="mm/dd/yyyy" value="<%= locals.bookInstance?.dueBackToHTMLInput() || ''%>" />
+            <%- include('./partials/field-errors', {fieldName: 'dueBack'}) %>
+          </div>
+
+          <div class="form-group">
+            <label for="bookStatus" class="form-label">status</label>
+            <select name="status" class="form-control <%= locals.errors?.status ? 'is-invalid' : '' %>" id="bookStatus"
+              value="<%= locals.bookInstance?.status || ''%>">
+              <option value="">select book status</option>
+
+              <% ;['Available', 'Maintenance', 'Loaned', 'Reserved'].forEach(status => {
+                %>
+              <!--  -->
+              <% if (locals.bookInstance?.status === status ) { %>
+              <option value="<%= status %>" selected><%= status %></option>
+              <% } else { %>
+              <option value="<%= status %>"><%= status %></option>
+              <% } %>
+              <!--  -->
+              <% }) %>
+            </select>
+            <%- include('./partials/field-errors', {fieldName: 'status'}) %>
+          </div>
+
+          <br />
+          <button class="btn btn-primary" type="submit">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

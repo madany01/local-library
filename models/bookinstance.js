@@ -32,6 +32,14 @@ BookInstanceSchema.virtual('dueBackFormatted').get(function () {
   return DateTime.fromJSDate(this.dueBack).toLocaleString(DateTime.DATE_MED)
 })
 
+BookInstanceSchema.methods.dueBackToHTMLInput = function () {
+  // yyyy-MM-dd
+  const mm = String(this.dueBack.getMonth() + 1).padStart(2, 0)
+  const dd = String(this.dueBack.getDate()).padStart(2, 0)
+  const yyyy = this.dueBack.getFullYear()
+  return `${yyyy}-${mm}-${dd}`
+}
+
 BookInstanceSchema.virtual('statusColor').get(function () {
   if (this.status === BOOK_STATUS.Available) return 'success'
   if (this.status === BOOK_STATUS.Maintenance) return 'danger'

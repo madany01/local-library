@@ -1,7 +1,7 @@
-const Author = require('./Author')
-const Book = require('./Book')
-const { BookInstance, BOOK_STATUS } = require('./BookInstance')
-const Genre = require('./Genre')
+const Author = require('./author')
+const Book = require('./book')
+const { BookInstance, BOOK_STATUS } = require('./bookinstance')
+const Genre = require('./genre')
 
 module.exports = {
   Author,

@@ -1,0 +1,7 @@
+<% if (locals.errors && locals.errors[fieldName]) { %>
+<ul class="invalid-feedback">
+  <% locals.errors[fieldName].forEach(error => { %>
+  <li><%= error.msg %></li>
+  <% }) %>
+</ul>
+<% } %>

@@ -12,7 +12,9 @@
             <li>
               <a href="<%= author.url %> "><%= author.name %> </a>
               <% if (author.birthDate || author.deathDate) { %>
-              <span><%= author.birthDateFormatted %> - <%= author.deathDateFormatted %></span>
+              <span
+                ><%= author.birthDateFormatted %> - <%= author.deathDateFormatted %></span
+              >
               <% } %>
             </li>
             <% }) %> <% } else { %>

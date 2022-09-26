@@ -1,4 +1,7 @@
-const { BookInstance } = require('../models')
+const { body, validationResult, oneOf } = require('express-validator')
+const { BookInstance, Book } = require('../models')
+const { formateValidationErrors } = require('../utils')
+const { getObjectOr404 } = require('../shortcuts')
 
 async function bookInstanceList(req, res) {
   const bookInstances = await BookInstance.find().populate('book')
@@ -18,35 +21,115 @@ async function bookInstanceDetail(req, res) {
     error.status = 404
     throw error
   }
+
   res.render('book-instance_detail', {
     title: `Copy ${bookInstance.book.title}`,
     bookInstance,
   })
 }
 
-function bookInstanceCreateGet(req, res) {
-  res.send('bookInstance create - get')
+async function bookInstanceCreateGet(req, res) {
+  const books = await Book.find()
+  res.render('book-instance_form', {
+    books,
+    title: 'Create Book Instance',
+  })
 }
 
-function bookInstanceCreatePost(req, res) {
-  res.send('bookInstance create - post')
+const bookInstanceCreatePost = [
+  body('book', 'Book must be specified').trim().isLength({ min: 1 }).escape(),
+  body('imprint', 'Imprint must be specified').trim().isLength({ min: 1 }).escape(),
+  body('status').escape().notEmpty().withMessage('status is required'),
+  oneOf([
+    body('dueBack', 'Invalid date').isEmpty().default(undefined),
+    body('dueBack', 'Invalid date').notEmpty().toDate().isISO8601(),
+  ]),
+
+  async (req, res) => {
+    const errors = validationResult(req)
+
+    const bookInstance = new BookInstance({
+      book: req.body.book,
+      imprint: req.body.imprint,
+      status: req.body.status,
+      dueBack: req.body.dueBack,
+    })
+
+    if (errors.isEmpty()) {
+      await bookInstance.save()
+      res.redirect(bookInstance.url)
+      return
+    }
+
+    const books = await Book.find()
+
+    res.render('book-instance_form', {
+      title: 'Create Book Instance',
+      bookInstance,
+      errors: formateValidationErrors(errors),
+      books,
+    })
+  },
+]
+async function bookInstanceDeleteGet(req, res) {
+  const bookInstance = await getObjectOr404(BookInstance, req.params.id)
+  await bookInstance.populate('book')
+  res.render('book-instance_delete', { title: 'Delete Book Instance', bookInstance })
 }
 
-function bookInstanceDeleteGet(req, res) {
-  res.send('bookInstance delete - get')
+async function bookInstanceDeletePost(req, res) {
+  const bookInstance = await getObjectOr404(BookInstance, req.params.id)
+  await bookInstance.delete()
+  res.redirect('/catalog/book-instances')
 }
 
-function bookInstanceDeletePost(req, res) {
-  res.send('bookInstance delete - post')
+async function bookInstanceUpdateGet(req, res) {
+  const bookInstance = await getObjectOr404(BookInstance, req.params.id)
+  const books = await Book.find()
+
+  res.render('book-instance_form', {
+    bookInstance,
+    title: 'Update Book Instance',
+    books,
+  })
 }
 
-function bookInstanceUpdateGet(req, res) {
-  res.send(`bookInstance update ${req.params.id} - get`)
-}
+const bookInstanceUpdatePost = [
+  body('book', 'Book must be specified').trim().isLength({ min: 1 }).escape(),
+  body('imprint', 'Imprint must be specified').trim().isLength({ min: 1 }).escape(),
+  body('status').escape().notEmpty().withMessage('status is required'),
+  oneOf([
+    body('dueBack', 'Invalid date').isEmpty().default(undefined),
+    body('dueBack', 'Invalid date').notEmpty().toDate().isISO8601(),
+  ]),
 
-function bookInstanceUpdatePost(req, res) {
-  res.send(`bookInstance update ${req.params.id} - post`)
-}
+  async (req, res) => {
+    const errors = validationResult(req)
+
+    const bookInstance = new BookInstance({
+      _id: req.params.id,
+      book: req.body.book,
+      imprint: req.body.imprint,
+      status: req.body.status,
+      dueBack: req.body.dueBack,
+    })
+
+    if (errors.isEmpty()) {
+      await BookInstance.findByIdAndUpdate(req.params.id, bookInstance)
+      res.redirect(bookInstance.url)
+      return
+    }
+
+    const books = await Book.find()
+
+    res.render('book-instance_form', {
+      title: 'Create Book Instance',
+      bookInstance,
+      errors: formateValidationErrors(errors),
+      books,
+    })
+  },
+]
 
 module.exports = {
   bookInstanceList,

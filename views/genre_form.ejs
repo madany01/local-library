@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('./partials/head') %>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-2"><%- include('./partials/sidebar') %></div>
+        <div class="col-sm-10">
+          <h1><%= title %></h1>
+
+          <form method="post">
+            <div class="form-group">
+              <label for="genreNameInput" class="form-label">name</label>
+              <input
+                type="text"
+                name="name"
+                class="form-control <%= locals.errors ? 'is-invalid' : '' %>"
+                id="genreNameInput"
+                placeholder="Fantasy"
+                required
+                value="<%= locals.genre?.name || ''%>"
+              />
+              <% if (locals.errors?.name) { %>
+              <ul class="invalid-feedback">
+                <% locals.errors.name.forEach(error => { %>
+                <li><%= error.msg %></li>
+                <% }) %>
+              </ul>
+              <% } %>
+              <br />
+
+              <button class="btn btn-primary" type="submit">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
