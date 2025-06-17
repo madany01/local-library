@@ -1,5 +1,18 @@
-# local-library
+# Local Library
 
-Simple library app built with Express and MongoDB while following [MDN Express guides](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs).\
-\
-**[👉 Live Preview](https://local-library.onrender.com/)**
+Full-stack library catalog management application.
+
+**[Live Preview](https://local-library.onrender.com/)**
+
+## Technologies
+
+### Backend
+
+- Node.js
+- Express.js
+- MongoDB
+
+### Frontend
+
+- EJS
+- HTML/CSS
